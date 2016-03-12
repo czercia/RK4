@@ -32,9 +32,6 @@ void RK4::solve(Parameters p)
     Complex k4(0, 0);
     double h = p.getDT();
 
-   // Vec tt;
-    VecComp yy2;
-    //VecDoub xx;
 
 
 
@@ -42,16 +39,14 @@ void RK4::solve(Parameters p)
     int nx = 2 * p.getL()/p.DX();
 	std::cout << "nx " << nx << std::endl;
     std::cout << "nt " << nt << std::endl;
-    VecComp psi;
 
-   // znalezc jakis madrzejszy sposob zapisnia tego
-   //funkcja od pliku?
+
     std::ostringstream nameA, nameR, nameI, nameRes;
     std::vector<std::string> names;
-    nameA << "//home//marta//RKponiedz//rungekuttacomplex//AbsPsi.dat";
-    nameR << "//home//marta//RKponiedz//rungekuttacomplex//RePsi.dat";
-    nameI << "//home//marta//RKponiedz//rungekuttacomplex//ImPsi.dat";
-    nameRes << "//home//marta//RKponiedz//rungekuttacomplex//Results.dat";
+    nameA << "//home//marta//RK4//AbsPsi.dat";
+    nameR << "//home//marta//RK4//RePsi.dat";
+    nameI << "//home//marta//RK4//ImPsi.dat";
+    nameRes << "//home//marta//RK4//Results.dat";
     std::ofstream ab (nameA.str().c_str()); names.push_back(nameA.str().c_str());
     std::ofstream re (nameR.str().c_str()); names.push_back(nameR.str().c_str());
     std::ofstream im (nameI.str().c_str()); names.push_back(nameI.str().c_str());
@@ -72,20 +67,10 @@ void RK4::solve(Parameters p)
 
 
     
-//    for (int j = 0; j < nx; j++)
-//    {
-//        xx.push_back(-p.getL() + j * p.DX());
 //
-//        double t = p.getT0();
-//        Complex y = p.psi0(xx[j], 1, 1);
-//
-//        VecDoub tt;
-//	    VecComp yy;
-//        yy.push_back(y);
-//        tt.push_back(p.getT0());
     VecDoub T; //wektor wartości czasów
     T.push_back(p.getT0()); //pierwszy czas
-    //VecComp YBefore; //poprzedni y
+
     Complex *YBefore = NULL;
     YBefore = new Complex [nx];
 
@@ -94,11 +79,10 @@ void RK4::solve(Parameters p)
 
         double t = p.getT0() + i * h; //czas
         T.push_back(t); //dopisujemy czas[i] do wektora T
-        //VecDoub X; //wektor wartosci x dla czasu T[i]
+
         double *X = NULL;
         X = new double[nx];
-        //X.push_back(-p.getL()); //pierwszy x = -L
-        //VecComp Y; //Psi(t) dla kolejnych x
+
         Complex *Y = NULL;
         Y = new Complex[nx];
         if (i==0)
@@ -109,7 +93,6 @@ void RK4::solve(Parameters p)
                 X[j] = -p.getL() + j * p.DX();
                 Complex y;
 
-               //dla czasu poczatkowego zapelniamy wektor Y wartosciami poczatkowymi psi
                 y = p.psi0(X[j], 1, 1);
                 Y[j] = y;
                 YBefore[j] = Y[j];
@@ -125,9 +108,6 @@ void RK4::solve(Parameters p)
             for ( j = 0; j < nx; j++)
             {
                 X[j] = -p.getL() + j * p.DX();
-                //X.push_back(-p.getL() + j * p.DX()); //wartosci x
-//                Complex y;
-
                 if (i == 0) {  //dla czasu poczatkowego zapelniamy wektor Y wartosciami poczatkowymi psi
                     y = p.psi0(X[j], 1, 1);
                 }
@@ -140,7 +120,7 @@ void RK4::solve(Parameters p)
                         h * (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0;
                 }
 
-                //Y.push_back(y);
+
                 Y[j] = y;
                 YBefore[j] = Y[j];
             }
@@ -164,10 +144,6 @@ void RK4::solve(Parameters p)
 
         delete Y;
         delete X;
-        //YBefore = Y;
-        //YBefore[j] = Y[j];
-        // if (YBefore.size() != Y.size()) std::cout << "ERROR" <<std::endl;//wektor Y zostanie stworzony nowy dla kolejnego czasu a sa potrzebne wartosci tego dla poprzedniego czasu, wiec
-        //przypisanie ich do YBefore
         if (i % 100 == 0)
         {
             ab << "\n";
@@ -192,8 +168,7 @@ void RK4::solve(Parameters p)
     std::cout << "Im(Psi(x, t)) saved to " << nameI.str().c_str() <<std::endl;
     std::cout << "Re(Psi(x, t)) saved to " << nameR.str().c_str() <<std::endl;
 
-    //std::cout << "rozmiar: " << xx.size() << " " << psi.size() << std::endl;
-    //saveToFile(p, X, psi);
+
     createGnuplotScript(names, p, nx,
                         "png", nt/100);
 
@@ -201,7 +176,7 @@ void RK4::solve(Parameters p)
 
 void ::RK4::createGnuplotScript(std::vector<std::string> names, Parameters p, int nx, std::string filetype, int nt) {
     std::ostringstream fn;
-    fn << "//home//marta//RKponiedz//rungekuttacomplex//script.txt";
+    fn << "//home//marta//RK4//script.txt";
     std::ofstream f(fn.str().c_str());
 
     f << "reset \n";
