@@ -38,11 +38,11 @@ void RK4::solve(Parameters p) {
 
     std::ostringstream nameA, nameR, nameI, nameP, nameRes;
     std::vector<std::string> names;
-    nameA << "//home//marta//RK4//AbsPsi.dat";
-    nameR << "//home//marta//RK4//RePsi.dat";
-    nameI << "//home//marta//RK4//ImPsi.dat";
-    nameP << "//home//marta//RK4//ArgPsi.dat";
-    nameRes << "//home//marta//RK4//Results.dat";
+    nameA << "//home//marta//RK4//AbsPsi2.dat";
+    nameR << "//home//marta//RK4//RePsi2.dat";
+    nameI << "//home//marta//RK4//ImPsi2.dat";
+    nameP << "//home//marta//RK4//ArgPsi2.dat";
+    nameRes << "//home//marta//RK4//Results2.dat";
     std::ofstream ab(nameA.str().c_str());
     names.push_back(nameA.str().c_str());
     std::ofstream re(nameR.str().c_str());
@@ -109,12 +109,13 @@ void RK4::solve(Parameters p) {
                     y = p.psi0(X[j], 1, 1);
                 }
                 else if (i > 0) {
-                    k1 = p.function(X[j], T[i - 1], j, YBefore, nx);
-                    k2 = p.function(X[j], T[i - 1] + h / 2, j, YBefore, nx);
-                    k3 = p.function(X[j], T[i - 1] + h / 2, j, YBefore, nx);
-                    k4 = p.function(X[j], T[i - 1] + h, j, YBefore, nx);
+                    k1 = h * p.function(X[j], T[i - 1], j, YBefore, nx, YBefore[j]);
+                    k2 = h * p.function(X[j], T[i - 1] + h / 2, j, YBefore, nx, YBefore[j] + 0.5 * k1 * h);
+                    //std::cout << YBefore[j] + 0.5 * k1 * h << std::endl;
+                    k3 = h * p.function(X[j], T[i - 1] + h / 2, j, YBefore, nx, YBefore[j] + 0.5 * k2 * h);
+                    k4 = h * p.function(X[j], T[i - 1] + h, j, YBefore, nx, YBefore[j] + k3 * h);
                     y = YBefore[j] +
-                        h * (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0;
+                        (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0;
                 }
 
                 Y[j] = y;
