@@ -7,6 +7,9 @@
 #include <complex>
 #include <string>
 #include <vector>
+#include <ctime>
+#include <cstdlib>
+#include <cstdio>
 
 typedef std::complex<double> Complex;
 typedef std::vector<std::complex<double>> VecComp;
@@ -18,10 +21,13 @@ class Parameters {
     double dt;
     double L;
     int init;
+    int Psi0;
 
     void initialPsi(Complex *y, VecComp &V, int y_length);
 
     Complex secondDerivative(int i, Complex *y, int y_length);
+
+    double generateGaussianNoise(double variance);
 
 public:
     double getT0();
@@ -34,7 +40,7 @@ public:
 
     Parameters(double t_0, double t_max, double d_t, double l, int);
 
-    Complex function(double x, double t, int j, Complex *y, int y_length);
+    Complex function(double x, double t, int j, Complex *y, int y_length, Complex psi);
 
     Complex psi0(double x, double a, double C);
 
